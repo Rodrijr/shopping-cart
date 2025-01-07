@@ -6,22 +6,26 @@ function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const handleOrderClick = (orderId) => {
-    navigate(`/orders/${orderId}`);
+
+  const handleOrderClick = (order) => {
+    navigate(`/orders/${order.id}`, { state: { order } });
   };
+
   const getOrders = async () => {
     try {
       const orders = await orderService.getUserOrders();
       console.log('JRBP -> orders:', orders);
-      setOrders(orders)
+      setOrders(orders);
     } catch (err) {
       console.error("Error al obtener ordenes de compra:", err);
       setError("No se pudo cargar ordenes de compra. Intenta nuevamente.");
     }
-  }
+  };
+
   useEffect(() => {
-    getOrders()
+    getOrders();
   }, []);
+
   return (
     <div className="container mt-4">
       <h1>Órdenes de Compra</h1>
@@ -29,7 +33,7 @@ function OrdersPage() {
         {orders.map((order) => (
           <div
             key={order.id}
-            onClick={() => handleOrderClick(order.id)}
+            onClick={() => handleOrderClick(order)}
             style={{ border: "1px solid #ddd", padding: "10px", margin: "10px", cursor: "pointer" }}
           >
             <h3> ODC-{order.id}</h3>
@@ -42,4 +46,5 @@ function OrdersPage() {
     </div>
   );
 }
+
 export default OrdersPage;

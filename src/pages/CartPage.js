@@ -46,6 +46,7 @@ function CartPage({ user, defaultAddress }) {
 
     try {
       // await cartService.cleanCart();
+      console.log('JRBP -> cart:', cart);
       await orderService.confirmOrder({
         userId: user.id,
         address,

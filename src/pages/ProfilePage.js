@@ -11,7 +11,7 @@ function ProfilePage() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user")) || {};
     setName(user.name || "");
-    setLastName(user.lastName || "");
+    setLastName(user.lastname || "");
     setAddress(user.address || "");
     setBirthDate(user.birthDate || "");
     setEmail(user.email || "");
@@ -76,16 +76,6 @@ function ProfilePage() {
             className="form-control"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Contraseña</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>

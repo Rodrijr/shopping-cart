@@ -35,6 +35,7 @@ function ProductList({ cart, addToCart }) {
       let cartItem = product;
       cartItem.quantity = 1;
       cartItem.productId = cartItem.id;
+      console.log('JRBP -> cartItem:', cartItem);
       addToCart(cartItem);
 
       await cartService.addToCart(cartItem);
