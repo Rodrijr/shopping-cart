@@ -12,7 +12,7 @@ function RegisterPage({ setUser }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newUser = { name, lastname, address, birthDate, email, password };
+    const newUser = { name, lastname, address, birthDate, email, password, username: email };
     //guardar en backend
     localStorage.setItem("user", JSON.stringify(newUser));
     userServices.createUser(newUser);

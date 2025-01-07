@@ -1,59 +1,34 @@
 import React, { useEffect, useState } from 'react';
+import productService from '../services/productService';
 
 function ProductList({ addToCart }) {
-  const [products, setProducts] = useState([
-    {
-      "id": 1,
-      "name": "Camiseta Deportiva",
-      "price": 20,
-      "description": "Camiseta para deportes de alta calidad.",
-      "image": "https://ae-pic-a1.aliexpress-media.com/kf/S3fda2bfcb3a841e69e32936c4628dae7S.jpg_960x960q75.jpg_.avif"
-    },
-    {
-      "id": 2,
-      "name": "Zapatillas Running",
-      "price": 50,
-      "description": "Zapatillas ideales para correr.",
-      "image": "https://ae-pic-a1.aliexpress-media.com/kf/H77848dc63a82438cbe93f0bdae2da332S.jpg_960x960q75.jpg_.avif"
-    },
-    {
-      "id": 2,
-      "name": "Zapatillas Running",
-      "price": 50,
-      "description": "Zapatillas ideales para correr.",
-      "image": "https://ae-pic-a1.aliexpress-media.com/kf/H77848dc63a82438cbe93f0bdae2da332S.jpg_960x960q75.jpg_.avif"
-    },
-    {
-      "id": 2,
-      "name": "Zapatillas Running",
-      "price": 50,
-      "description": "Zapatillas ideales para correr.",
-      "image": "https://ae-pic-a1.aliexpress-media.com/kf/H77848dc63a82438cbe93f0bdae2da332S.jpg_960x960q75.jpg_.avif"
-    },
-    {
-      "id": 2,
-      "name": "Zapatillas Running",
-      "price": 50,
-      "description": "Zapatillas ideales para correr.",
-      "image": "https://ae-pic-a1.aliexpress-media.com/kf/H77848dc63a82438cbe93f0bdae2da332S.jpg_960x960q75.jpg_.avif"
-    },
-    {
-      "id": 2,
-      "name": "Zapatillas Running",
-      "price": 50,
-      "description": "Zapatillas ideales para correr.",
-      "image": "https://ae-pic-a1.aliexpress-media.com/kf/H77848dc63a82438cbe93f0bdae2da332S.jpg_960x960q75.jpg_.avif"
-    }
-  ]
-);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
- /* useEffect(() => {
-    fetch('/products')
-      .then((response) => response.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.error('Error fetching products:', error));
-  }, []);
-*/
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await productService.getProducts();
+        setProducts(data);
+      } catch (error) {
+        setError('Hubo un problema al cargar los productos.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []); // El array vacío asegura que esto solo se ejecute una vez cuando el componente se monte
+
+  if (loading) {
+    return <p>Cargando productos...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   return (
     <div className="container mt-4">
       <h1>Lista de Productos</h1>
