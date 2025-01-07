@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
@@ -21,18 +20,16 @@ function LoginPage({ setUser }) {
         email,
         password,
       });
-      console.log(response)
       const data = response.data;
-      console.log((JSON.stringify(data)))
-      if (data.token) {
+
+      if (data.token && data.userId) {
         localStorage.setItem("token", data.token);
-        setUser({ email, username: response.data.username });
+        setUser({ email, id: data.userId });
         navigate("/");
       } else {
         setFormError("Correo o contraseña incorrectos");
       }
     } catch (error) {
-
       console.error("Error al iniciar sesión:", error);
       setFormError("Error al iniciar sesión. Por favor, inténtalo nuevamente.");
     }
@@ -41,12 +38,18 @@ function LoginPage({ setUser }) {
   return (
     <div className="container">
       <h2>Iniciar sesión</h2>
-      <form className="row g-3 needs-validation" onSubmit={handleLogin} noValidate>
+      <form
+        className="row g-3 needs-validation"
+        onSubmit={handleLogin}
+        noValidate
+      >
         <div className="col-md-6">
-          <label htmlFor="email" className="form-label">Correo electrónico</label>
+          <label htmlFor="email" className="form-label">
+            Correo electrónico
+          </label>
           <input
             type="email"
-            className={`form-control ${formError ? 'is-invalid' : ''}`}
+            className={`form-control ${formError ? "is-invalid" : ""}`}
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -55,10 +58,12 @@ function LoginPage({ setUser }) {
           {formError && <div className="invalid-feedback">{formError}</div>}
         </div>
         <div className="col-md-6">
-          <label htmlFor="password" className="form-label">Contraseña</label>
+          <label htmlFor="password" className="form-label">
+            Contraseña
+          </label>
           <input
             type="password"
-            className={`form-control ${formError ? 'is-invalid' : ''}`}
+            className={`form-control ${formError ? "is-invalid" : ""}`}
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

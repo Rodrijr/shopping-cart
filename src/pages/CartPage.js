@@ -1,21 +1,58 @@
-import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import cartService from "../services/cartService";
 
-function CartPage({ cart, removeFromCart, confirmOrder, defaultAddress }) {
+function CartPage({ user, defaultAddress, confirmOrder }) {
+  const [cart, setCart] = useState([]);
   const [address, setAddress] = useState(defaultAddress);
-
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleConfirmOrder = (address) => {
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const data = await cartService.getCart(user.id);
+        setCart(data.items);
+      } catch (err) {
+        console.error("Error al obtener el carrito:", err);
+        setError("No se pudo cargar el carrito. Intenta nuevamente.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCart();
+  }, [user.id]);
+
+  const handleRemoveFromCart = async (itemId) => {
+    try {
+      const updatedCart = cart.filter((item) => item.id !== itemId);
+      setCart(updatedCart);
+      await cartService.updateCart({ userId: user.id, items: updatedCart });
+    } catch (err) {
+      console.error("Error al actualizar el carrito:", err);
+      setError("No se pudo actualizar el carrito. Intenta nuevamente.");
+    }
+  };
+
+  const handleConfirmOrder = () => {
     if (!address.trim()) {
-      alert("Por favor, ingrese una dirección de entrega.");
+      setError("Por favor, ingrese una dirección de entrega.");
       return;
     }
     confirmOrder(address);
-    navigate(`/orders`);
+    navigate("/orders");
   };
+
+  if (loading) {
+    return <p>Cargando el carrito...</p>;
+  }
+
+  if (error) {
+    return <p className="text-danger">{error}</p>;
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="container mt-4">
@@ -48,7 +85,7 @@ function CartPage({ cart, removeFromCart, confirmOrder, defaultAddress }) {
                 </div>
                 <button
                   className="btn btn-danger"
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => handleRemoveFromCart(item.id)}
                 >
                   Eliminar
                 </button>
@@ -66,8 +103,12 @@ function CartPage({ cart, removeFromCart, confirmOrder, defaultAddress }) {
                 onChange={(e) => setAddress(e.target.value)}
               />
             </div>
-              <button className="btn btn-primary" onClick={() => handleConfirmOrder(defaultAddress)}>Confirmar Compra</button>
-
+            <button
+              className="btn btn-primary mt-3"
+              onClick={handleConfirmOrder}
+            >
+              Confirmar Compra
+            </button>
           </div>
         </>
       )}

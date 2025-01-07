@@ -5,7 +5,7 @@ const productService = {
       const response = await axiosInstance.get('/products');
       return response.data;
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error al obtener productos:', error);
       throw error;
     }
   },
