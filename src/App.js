@@ -75,7 +75,7 @@ function App() {
     setCart([]);
     alert("Compra confirmada exitosamente.");
   };
-
+  console.log('>>>>>>>>>>>>>>>>>>', user)
   return (
     <Router>
       <Header user={user} logout={logout} />
@@ -85,9 +85,7 @@ function App() {
           path="/cart"
           element={
             <CartPage
-              cart={cart}
-              removeFromCart={removeFromCart}
-              confirmOrder={confirmOrder}
+              user={user}
               defaultAddress={userProfile.defaultAddress}
             />
           }

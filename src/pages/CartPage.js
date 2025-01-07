@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import cartService from "../services/cartService";
+import orderService from "../services/orderService";
 
-function CartPage({ user, defaultAddress, confirmOrder }) {
+function CartPage({ user, defaultAddress }) {
   const [cart, setCart] = useState([]);
   const [address, setAddress] = useState(defaultAddress);
   const [loading, setLoading] = useState(true);
@@ -12,7 +13,10 @@ function CartPage({ user, defaultAddress, confirmOrder }) {
   useEffect(() => {
     const fetchCart = async () => {
       try {
+        console.log('JRBP -> user:', user);
+
         const data = await cartService.getCart(user.id);
+        console.log('JRBP -> data:', data);
         setCart(data.items);
       } catch (err) {
         console.error("Error al obtener el carrito:", err);
@@ -35,13 +39,24 @@ function CartPage({ user, defaultAddress, confirmOrder }) {
     }
   };
 
-  const handleConfirmOrder = () => {
+  const handleConfirmOrder = async () => {
     if (!address.trim()) {
       setError("Por favor, ingrese una dirección de entrega.");
       return;
     }
-    confirmOrder(address);
-    navigate("/orders");
+
+    try {
+      await orderService.confirmOrder({
+        userId: user.id,
+        address,
+        items: cart,
+        total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      });
+      navigate("/orders");
+    } catch (err) {
+      console.error("Error al confirmar la orden:", err);
+      setError("No se pudo confirmar la orden. Intenta nuevamente.");
+    }
   };
 
   if (loading) {

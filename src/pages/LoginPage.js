@@ -10,6 +10,7 @@ function LoginPage({ setUser }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log( email, password)
     if (!email || !password) {
       setFormError("Todos los campos son obligatorios.");
       return;
@@ -21,6 +22,7 @@ function LoginPage({ setUser }) {
         password,
       });
       const data = response.data;
+      console.log('JRBP -> data:', data);
 
       if (data.token && data.userId) {
         localStorage.setItem("token", data.token);
