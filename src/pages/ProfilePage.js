@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 function ProfilePage() {
-  // Estados para los campos del perfil
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
@@ -9,7 +8,6 @@ function ProfilePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Simulamos obtener datos del perfil cuando se monta el componente
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user")) || {};
     setName(user.name || "");
@@ -20,10 +18,8 @@ function ProfilePage() {
     setPassword(user.password || "");
   }, []);
 
-  // Función para manejar la actualización de los datos del perfil
   const handleProfileUpdate = (e) => {
     e.preventDefault();
-    // Guardamos los nuevos datos en localStorage o enviamos a la API
     const updatedUser = { name, lastName, address, birthDate, email, password };
     localStorage.setItem("user", JSON.stringify(updatedUser));
     alert("Perfil actualizado exitosamente!");

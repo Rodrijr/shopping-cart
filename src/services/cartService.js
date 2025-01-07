@@ -1,6 +1,6 @@
 import axiosInstance from "../api/axiosInstance";
 
-const CartService = {
+const cartService = {
   getCart: async (userId) => {
     try {
       const response = await axiosInstance.get(`/cart/${userId}`);
@@ -11,9 +11,20 @@ const CartService = {
     }
   },
 
-  updateCart: async (cart) => {
+  addToCart: async (product) => {
     try {
-      const response = await axiosInstance.put(`/cart/${cart.userId}`, cart);
+      const cartId = localStorage.getItem("cartId");
+      const response = await axiosInstance.post(`cart/add/${cartId}`,product);
+      return response.data;
+    } catch (error) {
+      throw new Error("Error al agregar el producto al carrito");
+    }
+  },
+
+  cleanCart: async () => {
+    try {
+      const cartId = localStorage.getItem("cartId");
+      const response = await axiosInstance.delete(`/cart/clean/${cartId}`);
       return response.data;
     } catch (error) {
       console.error("Error al actualizar el carrito:", error);
@@ -22,4 +33,4 @@ const CartService = {
   },
 };
 
-export default CartService;
+export default cartService;

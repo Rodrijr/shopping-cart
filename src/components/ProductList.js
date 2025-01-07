@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import productService from '../services/productService';
+import cartService from '../services/cartService';
 
-function ProductList({ addToCart }) {
+function ProductList({ cart, addToCart }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,8 +20,7 @@ function ProductList({ addToCart }) {
     };
 
     fetchProducts();
-  }, []); // El array vacío asegura que esto solo se ejecute una vez cuando el componente se monte
-
+  }, []);
   if (loading) {
     return <p>Cargando productos...</p>;
   }
@@ -29,6 +29,21 @@ function ProductList({ addToCart }) {
     return <p>{error}</p>;
   }
 
+  const handleAddToCart = async (product) => {
+    try {
+      console.log('JRBP -> cart1 :', cart);
+      let cartItem = product;
+      cartItem.quantity = 1;
+      cartItem.productId = cartItem.id;
+      addToCart(cartItem);
+
+      await cartService.addToCart(cartItem);
+    } catch (err) {
+      console.error("Error al agregar el producto al carrito:", err);
+    }
+  };
+
+  console.log('JRBP -> products:', products);
   return (
     <div className="container mt-4">
       <h1>Lista de Productos</h1>
@@ -45,7 +60,7 @@ function ProductList({ addToCart }) {
                 </p>
                 <button
                   className="btn btn-primary"
-                  onClick={() => addToCart(product)}
+                  onClick={() => handleAddToCart(product)}
                 >
                   Agregar al Carrito
                 </button>

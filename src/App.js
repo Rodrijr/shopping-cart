@@ -14,11 +14,13 @@ function App() {
   const [showToast, setShowToast] = useState(false);
   const [user, setUser] = useState(null);
 
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
+      console.log('JRBP -> token:', token);
       // Decodificar el JWT o hacer un llamada a backend para obtener los datos del usuario
-      setUser({ username: "Test User", email: "test@example.com" });
+      setUser({ username: "Test User", email: "john.doe@example.com" });
     }
   }, []);
 
@@ -35,7 +37,7 @@ function App() {
     defaultAddress: "Calle Falsa 123, Ciudad",
   });
   const notify = (productName) => {
-
+    console.log("prudcto agregado", productName)
   };
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -75,22 +77,25 @@ function App() {
     setCart([]);
     alert("Compra confirmada exitosamente.");
   };
-  console.log('>>>>>>>>>>>>>>>>>>', user)
+
   return (
     <Router>
       <Header user={user} logout={logout} />
       <Routes>
-        <Route path="/" element={<ProductList addToCart={addToCart} />} />
+        <Route path="/" element={<ProductList cart={cart} addToCart={addToCart} />} />
         <Route
           path="/cart"
           element={
             <CartPage
               user={user}
+              cart={cart}
+              removeFromCart={removeFromCart}
+              confirmOrder={confirmOrder}
               defaultAddress={userProfile.defaultAddress}
             />
           }
         />
-        <Route path="/orders" element={<OrdersPage orders={orders} />} />
+        <Route path="/orders" element={<OrdersPage/>} />
         <Route path="/orders/:orderId" element={<OrderDetailsPage orders={orders} />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage setUser={setUser} />} />

@@ -1,12 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
-
+import cartService from "../services/cartService";
 function LoginPage({ setUser }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("john.doe@example.com");
+  const [password, setPassword] = useState("securePassword123");
   const [formError, setFormError] = useState("");
+
   const navigate = useNavigate();
+    const getCart = async () => {
+      try {
+        const userString = localStorage.getItem("user");
+        let user = JSON.parse(userString)
+        const data = await cartService.getCart(user.userId);
+        localStorage.setItem("cartId", data.id);
+      } catch (err) {
+        console.error("Error al obtener el carrito:", err);
+        setFormError("Correo o contraseña incorrectos");
+      }
+    };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,6 +38,8 @@ function LoginPage({ setUser }) {
 
       if (data.token && data.userId) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data));
+        getCart();
         setUser({ email, id: data.userId });
         navigate("/");
       } else {

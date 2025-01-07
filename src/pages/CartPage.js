@@ -10,22 +10,21 @@ function CartPage({ user, defaultAddress }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        console.log('JRBP -> user:', user);
+  const getCart = async () => {
+    try {
 
-        const data = await cartService.getCart(user.id);
-        console.log('JRBP -> data:', data);
-        setCart(data.items);
-      } catch (err) {
-        console.error("Error al obtener el carrito:", err);
-        setError("No se pudo cargar el carrito. Intenta nuevamente.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCart();
+      const data = await cartService.getCart(user.id);
+     setCart(data.items);
+      console.log('JRBP -> data.items:', data.items);
+    } catch (err) {
+      console.error("Error al obtener el carrito:", err);
+      setError("No se pudo cargar el carrito. Intenta nuevamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    getCart();
   }, [user.id]);
 
   const handleRemoveFromCart = async (itemId) => {
@@ -46,11 +45,11 @@ function CartPage({ user, defaultAddress }) {
     }
 
     try {
+      // await cartService.cleanCart();
       await orderService.confirmOrder({
         userId: user.id,
         address,
         items: cart,
-        total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
       });
       navigate("/orders");
     } catch (err) {
@@ -66,6 +65,7 @@ function CartPage({ user, defaultAddress }) {
   if (error) {
     return <p className="text-danger">{error}</p>;
   }
+
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
